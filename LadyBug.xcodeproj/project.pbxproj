@@ -15,6 +15,8 @@
 		6CA02533297E4FFF005D963E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CA02531297E4FFF005D963E /* Main.storyboard */; };
 		6CA02535297E5000005D963E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CA02534297E5000005D963E /* Assets.xcassets */; };
 		6CA02538297E5000005D963E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CA02536297E5000005D963E /* LaunchScreen.storyboard */; };
+		6CA02541297E58C6005D963E /* LadyBugScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6CA02540297E58C6005D963E /* LadyBugScene.sks */; };
+		6CA02543297E5AFB005D963E /* LadyBugScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA02542297E5AFB005D963E /* LadyBugScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,8 @@
 		6CA02532297E4FFF005D963E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6CA02534297E5000005D963E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6CA02537297E5000005D963E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		6CA02540297E58C6005D963E /* LadyBugScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LadyBugScene.sks; sourceTree = "<group>"; };
+		6CA02542297E5AFB005D963E /* LadyBugScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LadyBugScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,8 @@
 				6CA02527297E4FFF005D963E /* AppDelegate.swift */,
 				6CA02529297E4FFF005D963E /* GameScene.sks */,
 				6CA0252B297E4FFF005D963E /* Actions.sks */,
+				6CA02540297E58C6005D963E /* LadyBugScene.sks */,
+				6CA02542297E5AFB005D963E /* LadyBugScene.swift */,
 				6CA0252D297E4FFF005D963E /* GameScene.swift */,
 				6CA0252F297E4FFF005D963E /* GameViewController.swift */,
 				6CA02531297E4FFF005D963E /* Main.storyboard */,
@@ -134,6 +140,7 @@
 				6CA02535297E5000005D963E /* Assets.xcassets in Resources */,
 				6CA02538297E5000005D963E /* LaunchScreen.storyboard in Resources */,
 				6CA0252C297E4FFF005D963E /* Actions.sks in Resources */,
+				6CA02541297E58C6005D963E /* LadyBugScene.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +154,7 @@
 				6CA0252E297E4FFF005D963E /* GameScene.swift in Sources */,
 				6CA02530297E4FFF005D963E /* GameViewController.swift in Sources */,
 				6CA02528297E4FFF005D963E /* AppDelegate.swift in Sources */,
+				6CA02543297E5AFB005D963E /* LadyBugScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,6 +303,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WPL7Q42L8U;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -323,6 +332,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WPL7Q42L8U;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
