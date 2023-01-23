@@ -8,9 +8,6 @@
 import SpriteKit
 import GameplayKit
 
-/// TODO: Life counting Simulation!
-///
-/// 같은 이름의 node 불러오기: [here](https://developer.apple.com/documentation/spritekit/sknode/1483070-subscript)
 final class LadyBugScene: SKScene, SKPhysicsContactDelegate {
     
     private var ladyBug: SKSpriteNode?
@@ -46,6 +43,7 @@ final class LadyBugScene: SKScene, SKPhysicsContactDelegate {
             if let life = lifes?.removeLast() {
                 life.alpha = 0
             }
+            blocks?.forEach(generateMove)
             isContact = false
         } else {
             for t in touches {
@@ -61,9 +59,6 @@ extension LadyBugScene {
         isContact = true
     }
     
-    /// block을 생성하는 함수
-    /// - Parameter element: 임의의 수
-    /// - Returns: 블록 타입
     private func generateBlock<T>(_ element: T) -> SKSpriteNode {
         let block = SKSpriteNode(imageNamed: "block")
         block.setScale(0.3)
@@ -74,18 +69,28 @@ extension LadyBugScene {
         block.physicsBody?.isDynamic = false
         block.physicsBody?.pinned = false
         block.position = CGPoint(x: .randomX, y: .randomY)
+        self.generateMove(block)
         self.addChild(block)
         return block
+    }
+    
+    private func generateMove(_ block: SKSpriteNode) {
+        let move = SKAction.move(
+            to: .init(x: .random(in: (-325 ..< 325)),
+                      y: .random(in: (-667 ..< 667))),
+            duration: 10
+        )
+        block.run(move)
     }
 }
 
 extension CGFloat {
     /// block이 좌우를 넘지않으면서, ladyBug를 침범하지않는 최소 x 범위
     static var randomX: CGFloat {
-        self.random(in: (-4.0 ..< -2.0)) * [-1.0, 1.0].randomElement()! * 64.0
+        self.random(in: (-4.0 ..< -3.0)) * [-1.0, 1.0].randomElement()! * 64.0
     }
     /// block이 상하를 넘지않으면서, life를 넘지않으면서, ladyBug를 침범하지않는 최소 y 범위
     static var randomY: CGFloat {
-        self.random(in: (-8.0 ..< -2.0)) * [-1.0, 1.0].randomElement()! * 64.0
+        self.random(in: (-8.0 ..< -6.0)) * [-1.0, 1.0].randomElement()! * 64.0
     }
 }
