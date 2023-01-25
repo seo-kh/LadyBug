@@ -8,61 +8,35 @@
 import SpriteKit
 import GameplayKit
 
-final class LadyBugScene: SKScene, SKPhysicsContactDelegate {
+final class LadyBugScene: SKScene {
     
     private var ladyBug: SKSpriteNode?
     private var blocks: [SKSpriteNode]?
     private var lifes: [SKSpriteNode]?
     private var isContact = false
     private var pivotPoint: CGPoint = .zero
+    private var lastUpdatedTime: TimeInterval = 0
+    private var elapsedTime: TimeInterval = 0
+    let duration: TimeInterval = 10
     
     override func sceneDidLoad() {
         ladyBug = childNode(withName: "ladyBug") as? SKSpriteNode
-//        blocks = (0 ..< 5).map(generateBlock)
+        blocks = (0 ..< 5).map(generateBlock)
         lifes = self["life"] as? [SKSpriteNode]
-
-        self.physicsWorld.contactDelegate = self
+        self.delegate = self
         
+        self.physicsWorld.contactDelegate = self
     }
     
     /// 접촉이 발생하면, 움직임이 없음.
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard !isContact else { return }
+        guard !isContact && !(lifes?.isEmpty ?? false) else { return }
         
         for t in touches {
             let position = t.location(in: self)
             /// bug's position
             ladyBug?.position = position
             /// bug's zRotaion
-            /// 1. zRotation은 radian 단위다. 기준은 +x축이다.
-            /// ladyBug?.zRotation = atan(position.y / position.x)
-            /// 2. bug는 +y축 기준에서 회전한다. 즉, zRotation이 30˙ 도 변하면, bug는 실제 (90+30)˚로 변한다. (이것은 우리가 원하는 방향이 아니다.!)
-            /// 𝛳 = 0˚면, bug는 실제 -90˚ 여야한다. 𝛳 = 90˚면, bug는 실제 0˚여야한다.
-            /// swift에서 제공하는 `atan`은 양수값만 제공하지않는다. 4분면마다 각도가 다르다.
-            /// 즉, 이를 보정하기위한 기준은 x값의 +/- 여부다. 이 기준에 따라 90˚, -90˚ 보정값을 추가하면 된다.
-            /// 𝛳 = atan(y/x) - π / 2 , where x > 0
-            /// 𝛳 = atan(y/x) + π / 2 , where x <0
-            /// switch position.x {
-            /// case let x where x > 0:
-            ///     ladyBug?.zRotation = atan(position.y / position.x) - (.pi / 2.0)
-            /// case let x where x <= 0:
-            ///     ladyBug?.zRotation = atan(position.y / position.x) + (.pi / 2.0)
-            /// default:
-            ///     break
-            /// }
-            /// 3. 마우스커서에 따라 회전이 즉각적으로 변했으면 좋겠다. piviotPoint를 만들어서 업데이트하자.
-            /// let deltaX = position.x - pivotPoint.x
-            /// let deltaY = position.y - pivotPoint.y
-            /// switch deltaX {
-            /// case let x where x > 0:
-            ///     ladyBug?.zRotation = atan(deltaY / deltaX) - (.pi / 2.0)
-            /// case let x where x <= 0:
-            ///     ladyBug?.zRotation = atan(deltaY / deltaX) + (.pi / 2.0)
-            /// default:
-            ///     break
-            /// }
-            /// 4. FPS 60이라, 계산이 너무 잦다. 조금만 움직여도 bug의 움직임이 너무 잦다.
-            ///     - 이를 보정하기위해,  `treshold`값을 이용해 작은 `delta`값은 무시.
             let deltaX = position.x - pivotPoint.x
             let deltaY = position.y - pivotPoint.y
             let treshold = 1.0
@@ -74,8 +48,6 @@ final class LadyBugScene: SKScene, SKPhysicsContactDelegate {
             default:
                 break
             }
-            
-            
         }
     }
     
@@ -94,16 +66,55 @@ final class LadyBugScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
 }
 
-extension LadyBugScene {
+extension LadyBugScene: SKSceneDelegate {
+    /// duration지난후, 새로운 블록 생성
+    ///
+    /// link: [here](https://blog.bitbebop.com/deltatime-spritekit-swift/)
+    func update(_ currentTime: TimeInterval, for scene: SKScene) {
+        guard !(lifes?.isEmpty ?? false) else { return }
+        
+        if lastUpdatedTime.isZero { lastUpdatedTime = currentTime }
+        let delta = currentTime - lastUpdatedTime
+        lastUpdatedTime = currentTime
+        elapsedTime += delta
+        
+        if elapsedTime > duration {
+            blocks?.forEach { $0.removeFromParent() }
+            blocks = (0 ..< 5).map(generateBlock)
+            elapsedTime = 0
+        }
+    }
+}
+
+extension LadyBugScene: SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
-        isContact = true
-        blocks?.forEach { $0.removeAllActions() }
+        if lifes?.count ?? 0 == 1 {
+            SoundManager.stop()
+            SoundManager.play(fileName: "gameover.wav")
+            if let life = lifes?.removeLast() { life.alpha = 0 }
+            blocks?.forEach { $0.removeFromParent() }
+            ladyBug?.run(SKAction.moveTo(y: -1500.0, duration: 5.0))
+        } else {
+            isContact = true
+            generateContactSound()
+            blocks?.forEach { $0.removeAllActions() }
+        }
+    }
+}
+
+private extension LadyBugScene {
+    func generateContactSound() {
+        let sound = SKAction.playSoundFileNamed(
+            "contact.wav",
+            waitForCompletion: false
+        )
+        let volume = SKAction.changeVolume(to: 0.1, duration: sound.duration)
+        ladyBug?.run(SKAction.group([sound, volume]))
     }
     
-    private func generateBlock<T>(_ element: T) -> SKSpriteNode {
+    func generateBlock<T>(_ element: T) -> SKSpriteNode {
         let block = SKSpriteNode(imageNamed: "block")
         block.setScale(0.3)
         block.physicsBody = SKPhysicsBody(rectangleOf: block.size)
@@ -118,11 +129,11 @@ extension LadyBugScene {
         return block
     }
     
-    private func generateMove(_ block: SKSpriteNode) {
+    func generateMove(_ block: SKSpriteNode) {
         let move = SKAction.move(
             to: .init(x: CGFloat.randomPosition.x,
                       y: CGFloat.randomPosition.y),
-            duration: 10
+            duration: .random(in: (3..<self.duration))
         )
         block.run(move)
     }
