@@ -13,6 +13,7 @@ final class LadyBugScene: SKScene {
     private var ladyBug: SKSpriteNode?
     private var blocks: [SKSpriteNode]?
     private var lifes: [SKSpriteNode]?
+    private var noticeMessage: SKLabelNode?
     private var isContact = false
     private var pivotPoint: CGPoint = .zero
     private var lastUpdatedTime: TimeInterval = 0
@@ -23,8 +24,8 @@ final class LadyBugScene: SKScene {
         ladyBug = childNode(withName: "ladyBug") as? SKSpriteNode
         blocks = (0 ..< 5).map(generateBlock)
         lifes = self["life"] as? [SKSpriteNode]
+        noticeMessage = childNode(withName: "noticeMessage") as? SKLabelNode
         self.delegate = self
-        
         self.physicsWorld.contactDelegate = self
     }
     
@@ -60,6 +61,7 @@ final class LadyBugScene: SKScene {
             if let life = lifes?.removeLast() { life.alpha = 0 }
             blocks = (0..<5).map(generateBlock)
             isContact = false
+            noticeMessage?.isHidden = true
         } else {
             for t in touches {
                 ladyBug?.position = t.location(in: self)
@@ -96,10 +98,12 @@ extension LadyBugScene: SKPhysicsContactDelegate {
             if let life = lifes?.removeLast() { life.alpha = 0 }
             blocks?.forEach { $0.removeFromParent() }
             ladyBug?.run(SKAction.moveTo(y: -1500.0, duration: 5.0))
+            noticeMessage?.isHidden = true
         } else {
             isContact = true
             generateContactSound()
             blocks?.forEach { $0.removeAllActions() }
+            noticeMessage?.isHidden = false
         }
     }
 }
